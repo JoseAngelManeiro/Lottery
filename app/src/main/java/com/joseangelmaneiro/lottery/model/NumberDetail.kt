@@ -1,4 +1,4 @@
-package com.joseangelmaneiro.lottery
+package com.joseangelmaneiro.lottery.model
 
 import com.google.gson.annotations.SerializedName
 

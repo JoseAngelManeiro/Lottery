@@ -1,6 +1,8 @@
-package com.joseangelmaneiro.lottery
+package com.joseangelmaneiro.lottery.data
 
 import com.google.gson.Gson
+import com.joseangelmaneiro.lottery.Either
+import com.joseangelmaneiro.lottery.model.NumberDetail
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
 
