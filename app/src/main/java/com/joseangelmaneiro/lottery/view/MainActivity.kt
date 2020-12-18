@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.joseangelmaneiro.lottery.Injector
 import com.joseangelmaneiro.lottery.model.NumberItem
 import com.joseangelmaneiro.lottery.R
+import com.joseangelmaneiro.lottery.data.ApiClient
+import com.joseangelmaneiro.lottery.data.LocalDataSource
+import com.joseangelmaneiro.lottery.model.Ticket
 import com.joseangelmaneiro.lottery.task.GetNumbersTask
 import com.joseangelmaneiro.lottery.task.SaveTicketTask
 import kotlinx.android.synthetic.main.activity_main.*
@@ -14,20 +16,19 @@ import java.lang.Exception
 
 class MainActivity : AppCompatActivity(), MainView {
 
-  private lateinit var getNumbersTask: GetNumbersTask
-  private lateinit var saveTicketTask: SaveTicketTask
+  private lateinit var apiClient: ApiClient
+  private lateinit var localDataSource: LocalDataSource
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
-    val injector = Injector(this)
-    getNumbersTask = injector.provideGetNumbersTask(this)
-    saveTicketTask = injector.provideSaveTicketTask(this)
-  }
+    apiClient = ApiClient()
+    localDataSource = LocalDataSource(this)
 
-  private fun loadNumbers() {
-    getNumbersTask.execute()
+    fab.setOnClickListener {
+      showAddTicketDialog { saveTicket(it) }
+    }
   }
 
   override fun loading() {
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity(), MainView {
 
   override fun showNumbers(numbers: List<NumberItem>) {
     progress_bar.visibility = View.GONE
-    Log.i("Numbers", numbers.toString())
+    numbers_text_view.text = numbers.toString()
   }
 
   override fun showError(exception: Exception) {
@@ -46,5 +47,13 @@ class MainActivity : AppCompatActivity(), MainView {
 
   override fun refreshNumbers() {
     loadNumbers()
+  }
+
+  private fun loadNumbers() {
+    GetNumbersTask(apiClient, localDataSource, this).execute()
+  }
+
+  private fun saveTicket(ticket: Ticket) {
+    SaveTicketTask(localDataSource, this).execute(ticket)
   }
 }

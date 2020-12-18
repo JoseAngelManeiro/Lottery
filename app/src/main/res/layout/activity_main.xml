@@ -11,10 +11,15 @@
       android:id="@+id/recycler_view"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:visibility="visible"
+      android:visibility="gone"
       android:scrollbars="vertical"
-      app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-      />
+      app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+  <TextView
+      android:id="@+id/numbers_text_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      tools:text="Hello"/>
 
   <ProgressBar
       android:id="@+id/progress_bar"
@@ -23,5 +28,14 @@
       android:layout_gravity="center"
       android:visibility="gone"
       tools:visibility="visible"/>
+
+  <com.google.android.material.floatingactionbutton.FloatingActionButton
+      android:id="@+id/fab"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="end|bottom"
+      android:src="@drawable/ic_add_white"
+      android:contentDescription="Añadir número de lotería"
+      android:layout_margin="16dp" />
 
 </FrameLayout>
