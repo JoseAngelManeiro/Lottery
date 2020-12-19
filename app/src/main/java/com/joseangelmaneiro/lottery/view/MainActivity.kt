@@ -1,6 +1,9 @@
 package com.joseangelmaneiro.lottery.view
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.joseangelmaneiro.lottery.model.NumberItem
@@ -72,6 +75,22 @@ class MainActivity : AppCompatActivity(), MainView {
     val ticket = Ticket(numberItem.number, numberItem.eurosBet)
     showTicketInfoDialog(ticket) {
       DeleteTicketTask(localDataSource, this).execute(ticket)
+    }
+  }
+
+  override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    val inflater: MenuInflater = menuInflater
+    inflater.inflate(R.menu.menu_main, menu)
+    return true
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when (item.itemId) {
+      R.id.action_refresh -> {
+        loadNumbers()
+        true
+      }
+      else -> super.onOptionsItemSelected(item)
     }
   }
 }
