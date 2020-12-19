@@ -36,7 +36,7 @@ class NumbersAdapter(
     }
 
     fun bind(numberItem: NumberItem) {
-      numberTextView.text = numberItem.number.padStart(5, '0')
+      numberTextView.text = numberItem.number
       eurosBetTextView.text = numberItem.eurosBet.toString().plus("€")
       if (numberItem.prize == 0) {
         prizeTextView.text = "Sin premio"

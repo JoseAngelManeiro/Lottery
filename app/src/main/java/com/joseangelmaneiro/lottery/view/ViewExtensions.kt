@@ -17,21 +17,49 @@ fun AppCompatActivity.showAddTicketDialog(
     AlertDialog.Builder(this)
         .setTitle("Añade un décimo de lotería")
         .setView(view)
-        .setNegativeButton("Cancelar") { dialog, _ ->
-            dialog.dismiss()
-        }
-        .setPositiveButton("Añadir décimo") { dialog, _ ->
+        .setNegativeButton("Cancelar", null)
+        .setPositiveButton("Añadir décimo") { _, _ ->
             val number = view.number_edit_text.text.toString()
             val eurosBet = view.euros_bet_edit_text.text.toString()
             if (number.isNotEmpty() &&
                 number.toInt() >= 0 &&
                 eurosBet.isNotEmpty() &&
                 eurosBet.toInt() > 0) {
-                val ticket = Ticket(number, eurosBet.toInt())
-                dialog.dismiss()
+                val ticket = Ticket(number.padStart(5, '0'), eurosBet.toInt())
                 listener.invoke(ticket)
             }
         }
+        .setCancelable(false)
+        .create()
+        .show()
+}
+
+fun AppCompatActivity.showErrorDialog(
+    retry: () -> Unit
+) {
+    AlertDialog.Builder(this)
+        .setTitle("Ha ocurrido un error")
+        .setMessage("¿Qué desea hacer?")
+        .setNegativeButton("Cancelar", null)
+        .setPositiveButton("Reintentar") { _, _ ->
+            retry()
+        }
+        .setCancelable(false)
+        .create()
+        .show()
+}
+
+fun AppCompatActivity.showTicketInfoDialog(
+    ticket: Ticket,
+    delete: (Ticket) -> Unit
+) {
+    AlertDialog.Builder(this)
+        .setTitle(ticket.number)
+        .setMessage("Estás jugando " + ticket.eurosBet + "€" + " a este número.")
+        .setNegativeButton("Eliminar décimo") { _, _ ->
+            delete(ticket)
+        }
+        .setPositiveButton("Cancelar", null)
         .setCancelable(false)
         .create()
         .show()

@@ -8,6 +8,7 @@ import com.joseangelmaneiro.lottery.R
 import com.joseangelmaneiro.lottery.data.ApiClient
 import com.joseangelmaneiro.lottery.data.LocalDataSource
 import com.joseangelmaneiro.lottery.model.Ticket
+import com.joseangelmaneiro.lottery.task.DeleteTicketTask
 import com.joseangelmaneiro.lottery.task.GetNumbersTask
 import com.joseangelmaneiro.lottery.task.SaveTicketTask
 import kotlinx.android.synthetic.main.activity_main.*
@@ -42,7 +43,6 @@ class MainActivity : AppCompatActivity(), MainView {
 
   override fun loading() {
     progress_bar.visibility = View.VISIBLE
-    recycler_view.visibility = View.GONE
     fab.isEnabled = false
   }
 
@@ -52,12 +52,12 @@ class MainActivity : AppCompatActivity(), MainView {
       onItemClickListener = { onNumberItemClicked(it) }
     )
     progress_bar.visibility = View.GONE
-    recycler_view.visibility = View.VISIBLE
     fab.isEnabled = true
   }
 
   override fun showError(exception: Exception) {
     progress_bar.visibility = View.GONE
+    showErrorDialog { loadNumbers() }
   }
 
   override fun refreshNumbers() {
@@ -69,6 +69,9 @@ class MainActivity : AppCompatActivity(), MainView {
   }
 
   private fun onNumberItemClicked(numberItem: NumberItem) {
-
+    val ticket = Ticket(numberItem.number, numberItem.eurosBet)
+    showTicketInfoDialog(ticket) {
+      DeleteTicketTask(localDataSource, this).execute(ticket)
+    }
   }
 }
