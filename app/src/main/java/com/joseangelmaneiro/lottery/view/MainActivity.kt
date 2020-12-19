@@ -1,7 +1,6 @@
 package com.joseangelmaneiro.lottery.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.joseangelmaneiro.lottery.model.NumberItem
@@ -26,34 +25,50 @@ class MainActivity : AppCompatActivity(), MainView {
     apiClient = ApiClient()
     localDataSource = LocalDataSource(this)
 
+    setUpFabButton()
+
+    loadNumbers()
+  }
+
+  private fun setUpFabButton() {
     fab.setOnClickListener {
       showAddTicketDialog { saveTicket(it) }
     }
-  }
-
-  override fun loading() {
-    progress_bar.visibility = View.VISIBLE
-  }
-
-  override fun showNumbers(numbers: List<NumberItem>) {
-    progress_bar.visibility = View.GONE
-    numbers_text_view.text = numbers.toString()
-  }
-
-  override fun showError(exception: Exception) {
-    progress_bar.visibility = View.GONE
-    Log.i("Numbers", exception.toString())
-  }
-
-  override fun refreshNumbers() {
-    loadNumbers()
   }
 
   private fun loadNumbers() {
     GetNumbersTask(apiClient, localDataSource, this).execute()
   }
 
+  override fun loading() {
+    progress_bar.visibility = View.VISIBLE
+    recycler_view.visibility = View.GONE
+    fab.isEnabled = false
+  }
+
+  override fun showNumbers(numbers: List<NumberItem>) {
+    recycler_view.adapter = NumbersAdapter(
+      items = numbers,
+      onItemClickListener = { onNumberItemClicked(it) }
+    )
+    progress_bar.visibility = View.GONE
+    recycler_view.visibility = View.VISIBLE
+    fab.isEnabled = true
+  }
+
+  override fun showError(exception: Exception) {
+    progress_bar.visibility = View.GONE
+  }
+
+  override fun refreshNumbers() {
+    loadNumbers()
+  }
+
   private fun saveTicket(ticket: Ticket) {
     SaveTicketTask(localDataSource, this).execute(ticket)
+  }
+
+  private fun onNumberItemClicked(numberItem: NumberItem) {
+
   }
 }

@@ -15,12 +15,6 @@
       android:scrollbars="vertical"
       app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-  <TextView
-      android:id="@+id/numbers_text_view"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      tools:text="Hello"/>
-
   <ProgressBar
       android:id="@+id/progress_bar"
       android:layout_width="wrap_content"
