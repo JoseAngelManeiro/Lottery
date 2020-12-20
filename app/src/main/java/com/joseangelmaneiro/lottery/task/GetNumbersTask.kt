@@ -31,14 +31,16 @@ class GetNumbersTask(
         } else {
             val result = mutableListOf<NumberItem>()
             ticketsSaved.forEach { ticket ->
-                val numberDetail = apiClient.getInfo(ticket.number.toInt())
-                if (numberDetail.isLeft) {
-                    return Either.left(numberDetail.leftValue)
+                val apiResponse = apiClient.getInfo(ticket.number.toInt())
+                if (apiResponse.isLeft) {
+                    return Either.left(apiResponse.leftValue)
                 } else {
+                    val numberDetail = apiResponse.rightValue
                     val numberItem = NumberItem(
                         ticket.number,
                         ticket.eurosBet,
-                        getTotalPrize(numberDetail.rightValue.prize, ticket.eurosBet)
+                        getTotalPrize(numberDetail.prize, ticket.eurosBet),
+                        numberDetail.status
                     )
                     result.add(numberItem)
                 }
