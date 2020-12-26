@@ -8,8 +8,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.joseangelmaneiro.lottery.model.NumberItem
 import com.joseangelmaneiro.lottery.R
-import com.joseangelmaneiro.lottery.data.ApiClient
-import com.joseangelmaneiro.lottery.data.LocalDataSource
 import com.joseangelmaneiro.lottery.model.Ticket
 import com.joseangelmaneiro.lottery.task.DeleteTicketTask
 import com.joseangelmaneiro.lottery.task.GetNumbersTask
@@ -19,18 +17,26 @@ import java.lang.Exception
 
 class MainActivity : AppCompatActivity(), MainView {
 
-  private lateinit var apiClient: ApiClient
-  private lateinit var localDataSource: LocalDataSource
+  private lateinit var injector: Injector
+
+  private lateinit var saveTicketTask: SaveTicketTask
+  private lateinit var deleteTicketTask: DeleteTicketTask
+  private lateinit var getNumbersTask: GetNumbersTask
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
-    apiClient = ApiClient()
-    localDataSource = LocalDataSource(this)
+    injector = Injector(this)
+    saveTicketTask = injector.getSaveTicketTask(this)
+    deleteTicketTask = injector.getDeleteTicketTask(this)
+    getNumbersTask = injector.getGetNumbersTask(this)
 
     setUpFabButton()
+  }
 
+  override fun onResume() {
+    super.onResume()
     loadNumbers()
   }
 
@@ -41,7 +47,7 @@ class MainActivity : AppCompatActivity(), MainView {
   }
 
   private fun loadNumbers() {
-    GetNumbersTask(apiClient, localDataSource, this).execute()
+    getNumbersTask(Unit)
   }
 
   override fun loading() {
@@ -68,13 +74,13 @@ class MainActivity : AppCompatActivity(), MainView {
   }
 
   private fun saveTicket(ticket: Ticket) {
-    SaveTicketTask(localDataSource, this).execute(ticket)
+    saveTicketTask(ticket)
   }
 
   private fun onNumberItemClicked(numberItem: NumberItem) {
     val ticket = Ticket(numberItem.number, numberItem.eurosBet)
     showTicketInfoDialog(ticket) {
-      DeleteTicketTask(localDataSource, this).execute(ticket)
+      deleteTicketTask(ticket)
     }
   }
 

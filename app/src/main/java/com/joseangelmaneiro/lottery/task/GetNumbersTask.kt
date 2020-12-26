@@ -1,18 +1,20 @@
 package com.joseangelmaneiro.lottery.task
 
-import android.os.AsyncTask
 import com.joseangelmaneiro.lottery.Either
 import com.joseangelmaneiro.lottery.view.MainView
 import com.joseangelmaneiro.lottery.model.NumberItem
 import com.joseangelmaneiro.lottery.data.ApiClient
 import com.joseangelmaneiro.lottery.data.LocalDataSource
+import com.joseangelmaneiro.lottery.executor.Task
+import com.joseangelmaneiro.lottery.executor.TaskExecutor
 import java.lang.ref.WeakReference
 
 class GetNumbersTask(
     private val apiClient: ApiClient,
     private val localDataSource: LocalDataSource,
-    view: MainView
-): AsyncTask<Void, Void, Either<Exception, List<NumberItem>>>() {
+    view: MainView,
+    taskExecutor: TaskExecutor
+): Task<Unit, List<NumberItem>>(taskExecutor) {
 
     companion object {
         const val DEFAULT_TICKET_PRICE = 20
@@ -24,7 +26,7 @@ class GetNumbersTask(
         view.get()?.loading()
     }
 
-    override fun doInBackground(vararg p0: Void?): Either<Exception, List<NumberItem>> {
+    override fun doInBackground(request: Unit): Either<Exception, List<NumberItem>> {
         val ticketsSaved = localDataSource.getTickets()
         if (ticketsSaved.isEmpty()) {
             return Either.right(emptyList())
@@ -49,11 +51,11 @@ class GetNumbersTask(
         }
     }
 
-    override fun onPostExecute(result: Either<Exception, List<NumberItem>>) {
+    override fun onPostExecute(response: Either<Exception, List<NumberItem>>) {
         view.get()?.run {
-            result.fold(
-                leftOp = { showError(result.leftValue) },
-                rightOp = { showNumbers(result.rightValue) }
+            response.fold(
+                leftOp = { showError(response.leftValue) },
+                rightOp = { showNumbers(response.rightValue) }
             )
         }
     }

@@ -1,15 +1,18 @@
 package com.joseangelmaneiro.lottery.task
 
-import android.os.AsyncTask
+import com.joseangelmaneiro.lottery.Either
 import com.joseangelmaneiro.lottery.view.MainView
 import com.joseangelmaneiro.lottery.model.Ticket
 import com.joseangelmaneiro.lottery.data.LocalDataSource
+import com.joseangelmaneiro.lottery.executor.Task
+import com.joseangelmaneiro.lottery.executor.TaskExecutor
 import java.lang.ref.WeakReference
 
 class SaveTicketTask(
     private val localDataSource: LocalDataSource,
-    view: MainView
-): AsyncTask<Ticket, Void, Boolean>() {
+    view: MainView,
+    taskExecutor: TaskExecutor
+): Task<Ticket, Boolean>(taskExecutor) {
 
     private val view = WeakReference(view)
 
@@ -17,11 +20,16 @@ class SaveTicketTask(
         view.get()?.loading()
     }
 
-    override fun doInBackground(vararg tickets: Ticket): Boolean {
-        return localDataSource.saveTicket(tickets[0])
+    override fun doInBackground(request: Ticket): Either<Exception, Boolean> {
+        val response = localDataSource.saveTicket(request)
+        return if (response) {
+            Either.right(response)
+        } else {
+            Either.left(Exception("No se ha guardado correctamente el ticket " + request.number))
+        }
     }
 
-    override fun onPostExecute(result: Boolean) {
+    override fun onPostExecute(response: Either<Exception, Boolean>) {
         view.get()?.refreshNumbers()
     }
 }
