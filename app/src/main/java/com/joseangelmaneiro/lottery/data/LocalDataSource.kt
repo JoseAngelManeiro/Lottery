@@ -3,13 +3,19 @@ package com.joseangelmaneiro.lottery.data
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.joseangelmaneiro.lottery.LotteryType
 import com.joseangelmaneiro.lottery.model.Ticket
 
-class LocalDataSource(context: Context) {
+class LocalDataSource(
+    context: Context,
+    lotteryType: LotteryType
+) {
 
-    companion object {
-        private const val PREF_FILE_KEY = "com.joseangelmaneiro.lottery.PREFERENCE_FILE_KEY"
-        private const val PREF_TICKETS_KEY = "pref_tickets_key"
+    private val PREF_FILE_KEY = "com.joseangelmaneiro.lottery.PREFERENCE_FILE_KEY"
+    private val PREF_TICKETS_KEY = if (lotteryType == LotteryType.NAVIDAD) {
+        "pref_tickets_key"
+    } else {
+        "pref_tickets_key_nino"
     }
 
     private val sharedPreferences = context.getSharedPreferences(PREF_FILE_KEY, Context.MODE_PRIVATE)

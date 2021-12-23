@@ -1,5 +1,6 @@
 package com.joseangelmaneiro.lottery.view
 
+import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,7 @@ import com.joseangelmaneiro.lottery.R
 import com.joseangelmaneiro.lottery.model.Ticket
 import kotlinx.android.synthetic.main.dialog_add_ticket.view.*
 
-fun AppCompatActivity.showAddTicketDialog(
+fun Activity.showAddTicketDialog(
     listener: (Ticket) -> Unit
 ) {
     val view = this.layoutInflater.inflate(R.layout.dialog_add_ticket, null)
@@ -34,7 +35,7 @@ fun AppCompatActivity.showAddTicketDialog(
         .show()
 }
 
-fun AppCompatActivity.showErrorDialog(
+fun Activity.showErrorDialog(
     retry: () -> Unit
 ) {
     AlertDialog.Builder(this)
@@ -49,7 +50,7 @@ fun AppCompatActivity.showErrorDialog(
         .show()
 }
 
-fun AppCompatActivity.showTicketInfoDialog(
+fun Activity.showTicketInfoDialog(
     ticket: Ticket,
     delete: (Ticket) -> Unit
 ) {

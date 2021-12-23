@@ -1,7 +1,7 @@
 package com.joseangelmaneiro.lottery.task
 
 import com.joseangelmaneiro.lottery.Either
-import com.joseangelmaneiro.lottery.view.MainView
+import com.joseangelmaneiro.lottery.view.NumbersView
 import com.joseangelmaneiro.lottery.model.NumberItem
 import com.joseangelmaneiro.lottery.data.ApiClient
 import com.joseangelmaneiro.lottery.data.LocalDataSource
@@ -12,7 +12,7 @@ import java.lang.ref.WeakReference
 class GetNumbersTask(
     private val apiClient: ApiClient,
     private val localDataSource: LocalDataSource,
-    view: MainView,
+    view: NumbersView,
     taskExecutor: TaskExecutor
 ): Task<Unit, List<NumberItem>>(taskExecutor) {
 

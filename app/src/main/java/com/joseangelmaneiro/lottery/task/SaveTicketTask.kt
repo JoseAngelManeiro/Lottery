@@ -1,7 +1,7 @@
 package com.joseangelmaneiro.lottery.task
 
 import com.joseangelmaneiro.lottery.Either
-import com.joseangelmaneiro.lottery.view.MainView
+import com.joseangelmaneiro.lottery.view.NumbersView
 import com.joseangelmaneiro.lottery.model.Ticket
 import com.joseangelmaneiro.lottery.data.LocalDataSource
 import com.joseangelmaneiro.lottery.executor.Task
@@ -10,7 +10,7 @@ import java.lang.ref.WeakReference
 
 class SaveTicketTask(
     private val localDataSource: LocalDataSource,
-    view: MainView,
+    view: NumbersView,
     taskExecutor: TaskExecutor
 ): Task<Ticket, Boolean>(taskExecutor) {
 
