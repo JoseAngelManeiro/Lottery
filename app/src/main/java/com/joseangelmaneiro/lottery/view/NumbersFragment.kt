@@ -17,6 +17,16 @@ import kotlinx.android.synthetic.main.fragment_numbers.*
 
 class NumbersFragment : Fragment(), NumbersView {
 
+    companion object {
+        private const val LOTTERY_TYPE = "lottery_type"
+
+        fun newInstance(lotteryType: LotteryType) = NumbersFragment().apply {
+            arguments = Bundle().apply {
+                putSerializable(LOTTERY_TYPE, lotteryType)
+            }
+        }
+    }
+
     private lateinit var saveTicketTask: SaveTicketTask
     private lateinit var deleteTicketTask: DeleteTicketTask
     private lateinit var getNumbersTask: GetNumbersTask
@@ -32,8 +42,10 @@ class NumbersFragment : Fragment(), NumbersView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val lotteryType = arguments?.get(LOTTERY_TYPE) as LotteryType
+
         activity?.applicationContext?.let { context ->
-            val injector = Injector(context, LotteryType.NAVIDAD)
+            val injector = Injector(context, lotteryType)
             saveTicketTask = injector.getSaveTicketTask(this)
             deleteTicketTask = injector.getDeleteTicketTask(this)
             getNumbersTask = injector.getGetNumbersTask(this)
@@ -55,11 +67,14 @@ class NumbersFragment : Fragment(), NumbersView {
     }
 
     override fun loading() {
-        progress_bar.visibility = View.VISIBLE
+        swipe_refresh.isRefreshing = true
         fab.isEnabled = false
     }
 
     override fun showNumbers(numbers: List<NumberItem>) {
+        swipe_refresh.setOnRefreshListener {
+            loadNumbers()
+        }
         recycler_view.adapter = NumbersAdapter(
             items = numbers,
             onItemClickListener = {
@@ -69,12 +84,12 @@ class NumbersFragment : Fragment(), NumbersView {
                 }
             }
         )
-        progress_bar.visibility = View.GONE
+        swipe_refresh.isRefreshing = false
         fab.isEnabled = true
     }
 
     override fun showError(exception: Exception) {
-        progress_bar.visibility = View.GONE
+        swipe_refresh.isRefreshing = false
         activity?.apply { showErrorDialog { loadNumbers() } }
     }
 

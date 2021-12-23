@@ -7,20 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".view.NumbersFragment">
 
-  <androidx.recyclerview.widget.RecyclerView
-      android:id="@+id/recycler_view"
+  <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+      android:id="@+id/swipe_refresh"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:scrollbars="vertical"
-      app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+      android:layout_height="match_parent">
 
-  <ProgressBar
-      android:id="@+id/progress_bar"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:visibility="gone"
-      tools:visibility="visible"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+  </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
   <com.google.android.material.floatingactionbutton.FloatingActionButton
       android:id="@+id/fab"
