@@ -42,7 +42,8 @@ class GetNumbersTask(
                         ticket.number,
                         ticket.eurosBet,
                         getTotalPrize(numberDetail.prize, ticket.eurosBet),
-                        numberDetail.status
+                        numberDetail.status,
+                        numberDetail.timestamp
                     )
                     result.add(numberItem)
                 }

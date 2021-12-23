@@ -16,7 +16,7 @@ class LocalDataSource(context: Context) {
     private val gson = Gson()
     private val ticketListType = object : TypeToken<List<Ticket>>() {}.type
 
-    fun saveTickets(tickets: List<Ticket>): Boolean {
+    private fun saveTickets(tickets: List<Ticket>): Boolean {
         return with(sharedPreferences.edit()) {
             val value = gson.toJson(tickets, ticketListType)
             putString(PREF_TICKETS_KEY, value)

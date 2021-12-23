@@ -15,7 +15,7 @@ class NumbersAdapter(
   private val onItemClickListener: (NumberItem) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-  private val DRAW_NOT_STARTED_LABEL = "El sorteo aún no ha empezado"
+  private val DRAW_NOT_STARTED_LABEL = "Sorteo no iniciado"
   private val DRAW_IN_PROGRESS_LABEL = "Sorteo en curso"
   private val NO_PRIZE_LIBEL = "Sin premio"
   private val PRIZE_SUFIX = " de premio"
@@ -39,6 +39,7 @@ class NumbersAdapter(
     private val eurosBetTextView = itemView.findViewById(R.id.euros_bet_text_view) as TextView
     private val prizeTextView = itemView.findViewById(R.id.prize_text_view) as TextView
     private val paddingBottomView = itemView.findViewById(R.id.padding_bottom_view) as View
+    private val timestampTextView = itemView.findViewById(R.id.timestamp_text_view) as TextView
 
     init {
       itemView.setOnClickListener {
@@ -70,6 +71,7 @@ class NumbersAdapter(
           }
         }
       }
+      timestampTextView.text = "Actualizado " + getDate(numberItem.timestamp)
       if (adapterPosition == items.lastIndex) {
         paddingBottomView.visibility = View.VISIBLE
       } else {
@@ -81,5 +83,13 @@ class NumbersAdapter(
   private fun TextView.setPrize(text: String, colorResource: Int) {
     this.text = text
     this.setTextColor(ContextCompat.getColor(this.context, colorResource))
+  }
+
+  private fun getDate(timestamp: Int): String {
+    val calendar = Calendar.getInstance()
+    calendar.timeInMillis = timestamp * 1000L
+    return "" + calendar.get(Calendar.DAY_OF_MONTH) + "/" +
+            (calendar.get(Calendar.MONTH) + 1) + "/" +
+            calendar.get(Calendar.YEAR)
   }
 }
