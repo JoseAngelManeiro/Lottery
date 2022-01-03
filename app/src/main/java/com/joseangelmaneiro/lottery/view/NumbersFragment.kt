@@ -10,12 +10,13 @@ import com.joseangelmaneiro.lottery.LotteryType
 import com.joseangelmaneiro.lottery.R
 import com.joseangelmaneiro.lottery.model.NumberItem
 import com.joseangelmaneiro.lottery.model.Ticket
+import com.joseangelmaneiro.lottery.task.DeleteAllTicketsTask
 import com.joseangelmaneiro.lottery.task.DeleteTicketTask
 import com.joseangelmaneiro.lottery.task.GetNumbersTask
 import com.joseangelmaneiro.lottery.task.SaveTicketTask
 import kotlinx.android.synthetic.main.fragment_numbers.*
 
-class NumbersFragment : Fragment(), NumbersView {
+class NumbersFragment : Fragment(), NumbersView, NumbersListener {
 
     companion object {
         private const val LOTTERY_TYPE = "lottery_type"
@@ -30,6 +31,7 @@ class NumbersFragment : Fragment(), NumbersView {
     private lateinit var saveTicketTask: SaveTicketTask
     private lateinit var deleteTicketTask: DeleteTicketTask
     private lateinit var getNumbersTask: GetNumbersTask
+    private lateinit var deleteAllTicketsTask: DeleteAllTicketsTask
 
     private lateinit var lotteryType: LotteryType
 
@@ -51,6 +53,7 @@ class NumbersFragment : Fragment(), NumbersView {
             saveTicketTask = injector.getSaveTicketTask(this)
             deleteTicketTask = injector.getDeleteTicketTask(this)
             getNumbersTask = injector.getGetNumbersTask(this)
+            deleteAllTicketsTask = injector.getDeleteAllTicketsTask(this)
 
             setUpFabButton()
 
@@ -94,5 +97,13 @@ class NumbersFragment : Fragment(), NumbersView {
 
     override fun refreshNumbers() {
         loadNumbers()
+    }
+
+    override fun getLotteryType(): LotteryType {
+        return lotteryType
+    }
+
+    override fun deleteAll() {
+        deleteAllTicketsTask.invoke(Unit)
     }
 }

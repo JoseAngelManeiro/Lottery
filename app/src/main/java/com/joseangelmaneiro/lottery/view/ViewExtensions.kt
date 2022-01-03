@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import com.joseangelmaneiro.lottery.LotteryType
 import com.joseangelmaneiro.lottery.R
 import com.joseangelmaneiro.lottery.model.Ticket
 import kotlinx.android.synthetic.main.dialog_add_ticket.view.*
@@ -61,6 +61,22 @@ fun Activity.showTicketInfoDialog(
             delete(ticket)
         }
         .setPositiveButton("Cancelar", null)
+        .setCancelable(false)
+        .create()
+        .show()
+}
+
+fun Activity.showDeleteAllTicketsDialog(
+    lotteryType: LotteryType,
+    deleteAll: () -> Unit
+) {
+    AlertDialog.Builder(this)
+        .setTitle("¿Quieres eliminar todos los números?")
+        .setMessage("Sorteo " + if (lotteryType == LotteryType.NAVIDAD) "Navidad" else "El Niño")
+        .setNegativeButton("Cancelar", null)
+        .setPositiveButton("Aceptar") { _, _ ->
+            deleteAll()
+        }
         .setCancelable(false)
         .create()
         .show()

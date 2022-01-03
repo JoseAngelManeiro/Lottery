@@ -6,6 +6,7 @@ import com.joseangelmaneiro.lottery.data.LocalDataSource
 import com.joseangelmaneiro.lottery.executor.BackgroundRunner
 import com.joseangelmaneiro.lottery.executor.MainRunner
 import com.joseangelmaneiro.lottery.executor.TaskExecutor
+import com.joseangelmaneiro.lottery.task.DeleteAllTicketsTask
 import com.joseangelmaneiro.lottery.task.DeleteTicketTask
 import com.joseangelmaneiro.lottery.task.GetNumbersTask
 import com.joseangelmaneiro.lottery.task.SaveTicketTask
@@ -33,5 +34,9 @@ class Injector(context: Context, lotteryType: LotteryType) {
 
     fun getGetNumbersTask(numbersView: NumbersView): GetNumbersTask {
         return GetNumbersTask(apiClient, localDataSource, numbersView, taskExecutor)
+    }
+
+    fun getDeleteAllTicketsTask(numbersView: NumbersView): DeleteAllTicketsTask {
+        return DeleteAllTicketsTask(localDataSource, numbersView, taskExecutor)
     }
 }

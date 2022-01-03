@@ -50,4 +50,8 @@ class LocalDataSource(
         tickets.remove(ticket)
         return saveTickets(tickets)
     }
+
+    fun deleteAll(): Boolean {
+        return saveTickets(emptyList())
+    }
 }
