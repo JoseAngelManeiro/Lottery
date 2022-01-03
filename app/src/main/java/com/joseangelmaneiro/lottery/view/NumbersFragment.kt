@@ -31,6 +31,8 @@ class NumbersFragment : Fragment(), NumbersView {
     private lateinit var deleteTicketTask: DeleteTicketTask
     private lateinit var getNumbersTask: GetNumbersTask
 
+    private lateinit var lotteryType: LotteryType
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,7 +44,7 @@ class NumbersFragment : Fragment(), NumbersView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val lotteryType = arguments?.get(LOTTERY_TYPE) as LotteryType
+        lotteryType = arguments?.get(LOTTERY_TYPE) as LotteryType
 
         activity?.applicationContext?.let { context ->
             val injector = Injector(context, lotteryType)
@@ -75,15 +77,12 @@ class NumbersFragment : Fragment(), NumbersView {
         swipe_refresh.setOnRefreshListener {
             loadNumbers()
         }
-        recycler_view.adapter = NumbersAdapter(
-            items = numbers,
-            onItemClickListener = {
-                activity?.apply {
-                    val ticket = Ticket(it.number, it.eurosBet)
-                    showTicketInfoDialog(ticket) { deleteTicketTask(ticket) }
-                }
+        recycler_view.adapter = NumbersAdapter(items = numbers, lotteryType = lotteryType) {
+            activity?.apply {
+                val ticket = Ticket(it.number, it.eurosBet)
+                showTicketInfoDialog(ticket) { deleteTicketTask(ticket) }
             }
-        )
+        }
         swipe_refresh.isRefreshing = false
         fab.isEnabled = true
     }

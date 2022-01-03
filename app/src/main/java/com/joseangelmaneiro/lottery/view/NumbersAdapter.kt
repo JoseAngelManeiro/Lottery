@@ -5,13 +5,16 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.joseangelmaneiro.lottery.LotteryType
 import com.joseangelmaneiro.lottery.R
 import com.joseangelmaneiro.lottery.model.NumberItem
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 class NumbersAdapter(
   private val items: List<NumberItem>,
+  private val lotteryType: LotteryType,
   private val onItemClickListener: (NumberItem) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -48,13 +51,15 @@ class NumbersAdapter(
     }
 
     fun bind(numberItem: NumberItem) {
+      val syncDate = getDate(numberItem.timestamp)
+      val isValidSyncDate = isValidSyncDate(syncDate, lotteryType)
       numberTextView.text = numberItem.number
       eurosBetTextView.text = numberFormat.format(numberItem.eurosBet)
-      when (numberItem.status) {
-        0 -> {
+      when {
+        numberItem.status == 0 || !isValidSyncDate -> {
           prizeTextView.setPrize(DRAW_NOT_STARTED_LABEL, R.color.blue_grey)
         }
-        1 -> {
+        numberItem.status == 1 -> {
           if (numberItem.prize == 0) {
             prizeTextView.setPrize(DRAW_IN_PROGRESS_LABEL, R.color.blue_grey)
           } else {
@@ -71,7 +76,7 @@ class NumbersAdapter(
           }
         }
       }
-      timestampTextView.text = "Actualizado " + getDate(numberItem.timestamp)
+      timestampTextView.text = if (isValidSyncDate) "Sorteo $syncDate" else ""
       if (adapterPosition == items.lastIndex) {
         paddingBottomView.visibility = View.VISIBLE
       } else {
@@ -80,16 +85,22 @@ class NumbersAdapter(
     }
   }
 
-  private fun TextView.setPrize(text: String, colorResource: Int) {
-    this.text = text
-    this.setTextColor(ContextCompat.getColor(this.context, colorResource))
-  }
-
   private fun getDate(timestamp: Int): String {
     val calendar = Calendar.getInstance()
     calendar.timeInMillis = timestamp * 1000L
-    return "" + calendar.get(Calendar.DAY_OF_MONTH) + "/" +
-            (calendar.get(Calendar.MONTH) + 1) + "/" +
-            calendar.get(Calendar.YEAR)
+    val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+    return simpleDateFormat.format(calendar.time)
+  }
+
+  private fun isValidSyncDate(syncDate: String, lotteryType: LotteryType): Boolean {
+    return when (lotteryType) {
+      LotteryType.NAVIDAD -> syncDate.startsWith("22/12")
+      LotteryType.EL_NINO -> syncDate.startsWith("06/01")
+    }
+  }
+
+  private fun TextView.setPrize(text: String, colorResource: Int) {
+    this.text = text
+    this.setTextColor(ContextCompat.getColor(this.context, colorResource))
   }
 }
