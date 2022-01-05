@@ -7,14 +7,21 @@ import com.joseangelmaneiro.lottery.LotteryType
 
 class PageAdapter(fm:FragmentManager) : FragmentPagerAdapter(fm) {
 
+    private val navidadNumbersFragment: NumbersFragment by lazy {
+        NumbersFragment.newInstance(LotteryType.NAVIDAD)
+    }
+    private val elNinoNumbersFragment: NumbersFragment by lazy {
+        NumbersFragment.newInstance(LotteryType.EL_NINO)
+    }
+
     override fun getCount(): Int {
         return 2
     }
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            0 -> NumbersFragment.newInstance(LotteryType.NAVIDAD)
-            else -> NumbersFragment.newInstance(LotteryType.EL_NINO)
+            0 -> navidadNumbersFragment
+            else -> elNinoNumbersFragment
         }
     }
 

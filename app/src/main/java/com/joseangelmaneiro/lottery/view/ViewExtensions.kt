@@ -71,8 +71,8 @@ fun Activity.showDeleteAllTicketsDialog(
     deleteAll: () -> Unit
 ) {
     AlertDialog.Builder(this)
-        .setTitle("¿Quieres eliminar todos los números?")
-        .setMessage("Sorteo " + if (lotteryType == LotteryType.NAVIDAD) "Navidad" else "El Niño")
+        .setTitle("Sorteo de " + if (lotteryType == LotteryType.NAVIDAD) "Navidad" else "El Niño")
+        .setMessage("¿Quieres eliminar todos los números?")
         .setNegativeButton("Cancelar", null)
         .setPositiveButton("Aceptar") { _, _ ->
             deleteAll()

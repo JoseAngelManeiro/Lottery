@@ -10,12 +10,23 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+  private lateinit var viewPagerAdapter: PageAdapter
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
-    viewPager.adapter = PageAdapter(supportFragmentManager)
+    viewPagerAdapter = PageAdapter(supportFragmentManager)
+    viewPager.adapter = viewPagerAdapter
     tabLayout.setupWithViewPager(viewPager)
+
+    setUpFabButton()
+  }
+
+  private fun setUpFabButton() {
+    fab.setOnClickListener {
+      getNumbersListener().onAddButtonClick()
+    }
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -27,18 +38,18 @@ class MainActivity : AppCompatActivity() {
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
       R.id.action_delete -> {
-        val numbersListener = getNumbersListener()
-        showDeleteAllTicketsDialog(numbersListener.getLotteryType()) {
-          numbersListener.deleteAll()
-        }
+        getNumbersListener().onDeleteButtonClick()
+        true
+      }
+      R.id.action_sync -> {
+        getNumbersListener().onSyncButtonClick()
         true
       }
       else -> super.onOptionsItemSelected(item)
     }
   }
 
-  private fun getNumbersListener(): NumbersListener {
-    return viewPager.adapter?.instantiateItem(viewPager, viewPager.currentItem) as NumbersListener
+  private fun getNumbersListener(): ActivityButtonsListener {
+    return viewPagerAdapter.getItem(viewPager.currentItem) as ActivityButtonsListener
   }
-
 }

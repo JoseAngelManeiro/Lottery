@@ -16,7 +16,7 @@ import com.joseangelmaneiro.lottery.task.GetNumbersTask
 import com.joseangelmaneiro.lottery.task.SaveTicketTask
 import kotlinx.android.synthetic.main.fragment_numbers.*
 
-class NumbersFragment : Fragment(), NumbersView, NumbersListener {
+class NumbersFragment : Fragment(), NumbersView, ActivityButtonsListener {
 
     companion object {
         private const val LOTTERY_TYPE = "lottery_type"
@@ -55,15 +55,7 @@ class NumbersFragment : Fragment(), NumbersView, NumbersListener {
             getNumbersTask = injector.getGetNumbersTask(this)
             deleteAllTicketsTask = injector.getDeleteAllTicketsTask(this)
 
-            setUpFabButton()
-
             loadNumbers()
-        }
-    }
-
-    private fun setUpFabButton() {
-        fab.setOnClickListener {
-            activity?.apply { showAddTicketDialog { saveTicketTask.invoke(it) } }
         }
     }
 
@@ -73,7 +65,6 @@ class NumbersFragment : Fragment(), NumbersView, NumbersListener {
 
     override fun loading() {
         swipe_refresh.isRefreshing = true
-        fab.isEnabled = false
     }
 
     override fun showNumbers(numbers: List<NumberItem>) {
@@ -87,7 +78,6 @@ class NumbersFragment : Fragment(), NumbersView, NumbersListener {
             }
         }
         swipe_refresh.isRefreshing = false
-        fab.isEnabled = true
     }
 
     override fun showError(exception: Exception) {
@@ -99,11 +89,17 @@ class NumbersFragment : Fragment(), NumbersView, NumbersListener {
         loadNumbers()
     }
 
-    override fun getLotteryType(): LotteryType {
-        return lotteryType
+    override fun onSyncButtonClick() {
+        loadNumbers()
     }
 
-    override fun deleteAll() {
-        deleteAllTicketsTask.invoke(Unit)
+    override fun onDeleteButtonClick() {
+        activity?.apply {
+            showDeleteAllTicketsDialog(lotteryType) { deleteAllTicketsTask.invoke(Unit) }
+        }
+    }
+
+    override fun onAddButtonClick() {
+        activity?.apply { showAddTicketDialog { saveTicketTask.invoke(it) } }
     }
 }
