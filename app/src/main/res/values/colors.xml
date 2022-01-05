@@ -6,4 +6,6 @@
     <color name="green">#2e7d32</color>
     <color name="blue_grey">#78909c</color>
     <color name="grey">#9e9e9e</color>
+
+    <color name="ic_launcher_background">#FFFFFE</color>
   </resources>
