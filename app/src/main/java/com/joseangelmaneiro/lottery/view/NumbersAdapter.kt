@@ -20,8 +20,9 @@ class NumbersAdapter(
 
   private val DRAW_NOT_STARTED_LABEL = "Sorteo no iniciado"
   private val DRAW_IN_PROGRESS_LABEL = "Sorteo en curso"
-  private val NO_PRIZE_LIBEL = "Sin premio"
+  private val NO_PRIZE_LABEL = "Sin premio"
   private val PRIZE_SUFIX = " de premio"
+  private val NO_INFO_LABEL = "Sin información"
 
   private val numberFormat = NumberFormat.getCurrencyInstance(Locale.GERMANY).apply {
     maximumFractionDigits = 0
@@ -56,6 +57,9 @@ class NumbersAdapter(
       numberTextView.text = numberItem.number
       eurosBetTextView.text = numberFormat.format(numberItem.eurosBet)
       when {
+        numberItem.status == -1 -> {
+          prizeTextView.setPrize(NO_INFO_LABEL, R.color.blue_grey)
+        }
         numberItem.status == 0 || !isValidSyncDate -> {
           prizeTextView.setPrize(DRAW_NOT_STARTED_LABEL, R.color.blue_grey)
         }
@@ -69,7 +73,7 @@ class NumbersAdapter(
         }
         else -> {
           if (numberItem.prize == 0) {
-            prizeTextView.setPrize(NO_PRIZE_LIBEL, R.color.blue_grey)
+            prizeTextView.setPrize(NO_PRIZE_LABEL, R.color.blue_grey)
           } else {
             prizeTextView.setPrize(numberFormat.format(numberItem.prize).plus(PRIZE_SUFIX),
               R.color.green)

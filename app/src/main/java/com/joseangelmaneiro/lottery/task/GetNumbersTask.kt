@@ -35,7 +35,14 @@ class GetNumbersTask(
             ticketsSaved.forEach { ticket ->
                 val apiResponse = apiClient.getInfo(ticket.number.toInt())
                 if (apiResponse.isLeft) {
-                    return Either.left(apiResponse.leftValue)
+                    val numberItem = NumberItem(
+                        ticket.number,
+                        ticket.eurosBet,
+                        0,
+                        -1, // Status = -1 -> No info (Service error)
+                        0
+                    )
+                    result.add(numberItem)
                 } else {
                     val numberDetail = apiResponse.rightValue
                     val numberItem = NumberItem(

@@ -22,12 +22,19 @@ class ApiClient(lotteryType: LotteryType) {
         val request = Request.Builder()
             .url(urlPrefix + number)
             .build()
-        val response = client.newCall(request).execute()
-        return if (response.isSuccessful) {
-            val bodyText = response.body().string()
-            val result = gson.fromJson(bodyText.removePrefix("busqueda="), NumberDetail::class.java)
-            Either.right(result)
-        } else {
+        return try {
+            val response = client.newCall(request).execute()
+            if (response.isSuccessful) {
+                val bodyText = response.body().string()
+                val result = gson.fromJson(
+                    bodyText.removePrefix("busqueda="),
+                    NumberDetail::class.java
+                )
+                Either.right(result)
+            } else {
+                Either.left(Exception())
+            }
+        } catch (e: Exception) {
             Either.left(Exception())
         }
     }
