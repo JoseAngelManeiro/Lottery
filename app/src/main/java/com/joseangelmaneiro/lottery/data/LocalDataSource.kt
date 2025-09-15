@@ -7,15 +7,13 @@ import com.joseangelmaneiro.lottery.LotteryType
 import com.joseangelmaneiro.lottery.model.Ticket
 
 class LocalDataSource(
-    context: Context,
-    lotteryType: LotteryType
+    private val context: Context,
+    private val lotteryType: LotteryType
 ) {
 
-    private val PREF_FILE_KEY = "com.joseangelmaneiro.lottery.PREFERENCE_FILE_KEY"
-    private val PREF_TICKETS_KEY = if (lotteryType == LotteryType.NAVIDAD) {
-        "pref_tickets_key"
-    } else {
-        "pref_tickets_key_nino"
+    companion object {
+
+        private const val PREF_FILE_KEY = "com.joseangelmaneiro.lottery.PREFERENCE_FILE_KEY"
     }
 
     private val sharedPreferences = context.getSharedPreferences(PREF_FILE_KEY, Context.MODE_PRIVATE)
@@ -25,7 +23,7 @@ class LocalDataSource(
     private fun saveTickets(tickets: List<Ticket>): Boolean {
         return with(sharedPreferences.edit()) {
             val value = gson.toJson(tickets, ticketListType)
-            putString(PREF_TICKETS_KEY, value)
+            putString(lotteryType.prefKey, value)
             commit()
         }
     }
@@ -37,7 +35,7 @@ class LocalDataSource(
     }
 
     fun getTickets(): List<Ticket> {
-        val json = sharedPreferences.getString(PREF_TICKETS_KEY, null)
+        val json = sharedPreferences.getString(lotteryType.prefKey, null)
         return if (json.isNullOrEmpty()) {
             emptyList()
         } else {

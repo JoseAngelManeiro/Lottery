@@ -4,29 +4,26 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
 import com.joseangelmaneiro.lottery.LotteryType
 import com.joseangelmaneiro.lottery.R
 import com.joseangelmaneiro.lottery.model.Ticket
-import kotlinx.android.synthetic.main.dialog_add_ticket.view.*
 
 fun Activity.showAddTicketDialog(
     listener: (Ticket) -> Unit
 ) {
     val view = this.layoutInflater.inflate(R.layout.dialog_add_ticket, null)
+    val numberEditText = view.findViewById<EditText>(R.id.number_edit_text)
     AlertDialog.Builder(this)
         .setTitle("Añade un décimo de lotería")
         .setView(view)
         .setNegativeButton("Cancelar", null)
         .setPositiveButton("Añadir décimo") { _, _ ->
-            val number = view.number_edit_text.text.toString()
-            val eurosBet = view.euros_bet_edit_text.text.toString()
-            if (number.isNotEmpty() &&
-                number.toInt() >= 0 &&
-                eurosBet.isNotEmpty() &&
-                eurosBet.toInt() > 0) {
-                val ticket = Ticket(number.padStart(5, '0'), eurosBet.toInt())
+            val number = numberEditText.text.toString()
+            if (number.isNotEmpty() && number.toInt() >= 0) {
+                val ticket = Ticket(number.padStart(5, '0'))
                 listener.invoke(ticket)
             }
         }
@@ -56,8 +53,8 @@ fun Activity.showTicketInfoDialog(
 ) {
     AlertDialog.Builder(this)
         .setTitle(ticket.number)
-        .setMessage("Estás jugando " + ticket.eurosBet + "€" + " a este número.")
-        .setNegativeButton("Eliminar décimo") { _, _ ->
+        .setMessage("Eliminar este décimo de lotería")
+        .setNegativeButton("Eliminar") { _, _ ->
             delete(ticket)
         }
         .setPositiveButton("Cancelar", null)

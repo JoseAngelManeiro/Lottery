@@ -15,21 +15,20 @@ class PageAdapter(fm:FragmentManager) : FragmentPagerAdapter(fm) {
     }
 
     override fun getCount(): Int {
-        return 2
+        return LotteryType.values().size
     }
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            0 -> navidadNumbersFragment
+            LotteryType.NAVIDAD.tabIndex -> navidadNumbersFragment
             else -> elNinoNumbersFragment
         }
     }
 
     override fun getPageTitle(position: Int): CharSequence {
         return when (position) {
-            0 -> "NAVIDAD"
-            else -> "EL NIÑO"
+            LotteryType.NAVIDAD.tabIndex -> LotteryType.NAVIDAD.tabTitle
+            else -> LotteryType.EL_NINO.tabTitle
         }
     }
-
 }

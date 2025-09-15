@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import com.joseangelmaneiro.lottery.Injector
 import com.joseangelmaneiro.lottery.LotteryType
 import com.joseangelmaneiro.lottery.R
@@ -14,7 +16,6 @@ import com.joseangelmaneiro.lottery.task.DeleteAllTicketsTask
 import com.joseangelmaneiro.lottery.task.DeleteTicketTask
 import com.joseangelmaneiro.lottery.task.GetNumbersTask
 import com.joseangelmaneiro.lottery.task.SaveTicketTask
-import kotlinx.android.synthetic.main.fragment_numbers.*
 
 class NumbersFragment : Fragment(), NumbersView, ActivityButtonsListener {
 
@@ -28,12 +29,16 @@ class NumbersFragment : Fragment(), NumbersView, ActivityButtonsListener {
         }
     }
 
-    private lateinit var saveTicketTask: SaveTicketTask
-    private lateinit var deleteTicketTask: DeleteTicketTask
-    private lateinit var getNumbersTask: GetNumbersTask
-    private lateinit var deleteAllTicketsTask: DeleteAllTicketsTask
+    private var numbersRecyclerView: RecyclerView? = null
+
+    private var saveTicketTask: SaveTicketTask? = null
+    private var deleteTicketTask: DeleteTicketTask? = null
+    private var getNumbersTask: GetNumbersTask? = null
+    private var deleteAllTicketsTask: DeleteAllTicketsTask? = null
 
     private lateinit var lotteryType: LotteryType
+
+    private var syncButtonClicked: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +53,8 @@ class NumbersFragment : Fragment(), NumbersView, ActivityButtonsListener {
 
         lotteryType = arguments?.get(LOTTERY_TYPE) as LotteryType
 
+        numbersRecyclerView = view.findViewById(R.id.recycler_view)
+
         activity?.applicationContext?.let { context ->
             val injector = Injector(context, lotteryType)
             saveTicketTask = injector.getSaveTicketTask(this)
@@ -60,28 +67,26 @@ class NumbersFragment : Fragment(), NumbersView, ActivityButtonsListener {
     }
 
     private fun loadNumbers() {
-        getNumbersTask(Unit)
-    }
-
-    override fun loading() {
-        swipe_refresh.isRefreshing = true
+        getNumbersTask?.invoke(Unit)
     }
 
     override fun showNumbers(numbers: List<NumberItem>) {
-        swipe_refresh.setOnRefreshListener {
-            loadNumbers()
-        }
-        recycler_view.adapter = NumbersAdapter(items = numbers, lotteryType = lotteryType) {
+        (requireActivity() as? TabsHost)?.updateTabCount(lotteryType, numbers.size)
+
+        numbersRecyclerView?.adapter = NumbersAdapter(numbers.sortByLotteryType()) {
             activity?.apply {
-                val ticket = Ticket(it.number, it.eurosBet)
-                showTicketInfoDialog(ticket) { deleteTicketTask(ticket) }
+                val ticket = Ticket(it.number)
+                showTicketInfoDialog(ticket) { deleteTicketTask?.invoke(ticket) }
             }
         }
-        swipe_refresh.isRefreshing = false
+
+        if (syncButtonClicked) {
+            Toast.makeText(requireActivity(), "Información actualizada", Toast.LENGTH_SHORT).show()
+            syncButtonClicked = false
+        }
     }
 
     override fun showError(exception: Exception) {
-        swipe_refresh.isRefreshing = false
         activity?.apply { showErrorDialog { loadNumbers() } }
     }
 
@@ -90,16 +95,40 @@ class NumbersFragment : Fragment(), NumbersView, ActivityButtonsListener {
     }
 
     override fun onSyncButtonClick() {
+        syncButtonClicked = true
         loadNumbers()
     }
 
     override fun onDeleteButtonClick() {
         activity?.apply {
-            showDeleteAllTicketsDialog(lotteryType) { deleteAllTicketsTask.invoke(Unit) }
+            showDeleteAllTicketsDialog(lotteryType) { deleteAllTicketsTask?.invoke(Unit) }
         }
     }
 
     override fun onAddButtonClick() {
-        activity?.apply { showAddTicketDialog { saveTicketTask.invoke(it) } }
+        activity?.apply { showAddTicketDialog { saveTicketTask?.invoke(it) } }
+    }
+
+    override fun onDestroyView() {
+        numbersRecyclerView = null
+        saveTicketTask = null
+        deleteTicketTask = null
+        getNumbersTask = null
+        deleteAllTicketsTask = null
+        super.onDestroyView()
+    }
+
+    /**
+     * If LotteryType is "NAVIDAD" we'll display the list of numbers sorted in ascending order
+     * by the full numeric value.
+     * If LotteryType is "EL_NINO" we'll display the list of numbers sorted in ascending order
+     * the last digit of each number.
+     */
+    private fun List<NumberItem>.sortByLotteryType(): List<NumberItem> {
+        return if (lotteryType == LotteryType.NAVIDAD) {
+            sortedBy { it.number.toInt() }
+        } else {
+            sortedBy { it.number.last() }
+        }
     }
 }

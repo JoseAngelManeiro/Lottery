@@ -15,9 +15,7 @@ class DeleteAllTicketsTask(
 
     private val view = WeakReference(view)
 
-    override fun onPreExecute() {
-        view.get()?.loading()
-    }
+    override fun onPreExecute() { }
 
     override fun doInBackground(request: Unit): Either<Exception, Boolean> {
         val response = localDataSource.deleteAll()

@@ -12,20 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:textSize="20sp"
+        android:textSize="22sp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:hint="Número del décimo" />
-
-    <EditText
-        android:id="@+id/euros_bet_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:textSize="20sp"
-        android:layout_marginTop="14dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:hint="Euros jugados"/>
+        android:hint="Número del décimo"
+        android:maxLength="5"/>
 
 </LinearLayout>

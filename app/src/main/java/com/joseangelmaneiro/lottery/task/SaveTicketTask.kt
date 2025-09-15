@@ -16,9 +16,7 @@ class SaveTicketTask(
 
     private val view = WeakReference(view)
 
-    override fun onPreExecute() {
-        view.get()?.loading()
-    }
+    override fun onPreExecute() { }
 
     override fun doInBackground(request: Ticket): Either<Exception, Boolean> {
         val response = localDataSource.saveTicket(request)

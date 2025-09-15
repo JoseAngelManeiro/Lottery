@@ -7,6 +7,8 @@ import com.joseangelmaneiro.lottery.data.ApiClient
 import com.joseangelmaneiro.lottery.data.LocalDataSource
 import com.joseangelmaneiro.lottery.executor.Task
 import com.joseangelmaneiro.lottery.executor.TaskExecutor
+import com.joseangelmaneiro.lottery.model.PrizeStatus
+import com.joseangelmaneiro.lottery.model.Prize
 import java.lang.ref.WeakReference
 
 class GetNumbersTask(
@@ -16,46 +18,32 @@ class GetNumbersTask(
     taskExecutor: TaskExecutor
 ): Task<Unit, List<NumberItem>>(taskExecutor) {
 
-    companion object {
-        const val DEFAULT_TICKET_PRICE = 20
-    }
-
     private val view = WeakReference(view)
 
-    override fun onPreExecute() {
-        view.get()?.loading()
-    }
+    override fun onPreExecute() { }
 
     override fun doInBackground(request: Unit): Either<Exception, List<NumberItem>> {
         val ticketsSaved = localDataSource.getTickets()
         if (ticketsSaved.isEmpty()) {
             return Either.right(emptyList())
         } else {
-            val result = mutableListOf<NumberItem>()
-            ticketsSaved.forEach { ticket ->
-                val apiResponse = apiClient.getInfo(ticket.number.toInt())
-                if (apiResponse.isLeft) {
+            val apiResponse = apiClient.getNumbers()
+            if (apiResponse.isLeft) {
+                return Either.left(apiResponse.leftValue)
+            } else {
+                val winningNumbersMap = apiResponse.rightValue
+                val result = mutableListOf<NumberItem>()
+                ticketsSaved.forEach { ticket ->
+                    val prize = winningNumbersMap.getPrize(ticket.number)
                     val numberItem = NumberItem(
-                        ticket.number,
-                        ticket.eurosBet,
-                        0,
-                        -1, // Status = -1 -> No info (Service error)
-                        0
-                    )
-                    result.add(numberItem)
-                } else {
-                    val numberDetail = apiResponse.rightValue
-                    val numberItem = NumberItem(
-                        ticket.number,
-                        ticket.eurosBet,
-                        getTotalPrize(numberDetail.prize, ticket.eurosBet),
-                        numberDetail.status,
-                        numberDetail.timestamp
+                        number = ticket.number,
+                        prize = prize
                     )
                     result.add(numberItem)
                 }
+                return Either.right(result)
             }
-            return Either.right(result)
+
         }
     }
 
@@ -68,7 +56,12 @@ class GetNumbersTask(
         }
     }
 
-    private fun getTotalPrize(prizeByDefaultTicket: Int, eurosBet: Int): Int{
-        return (prizeByDefaultTicket * eurosBet) / DEFAULT_TICKET_PRICE
+    private fun Map<Int, Int>.getPrize(ticketNumber: String): Prize {
+        val winningNumber = this[ticketNumber.toInt()]
+        return when {
+            this.isEmpty() -> Prize(PrizeStatus.NoInfo)
+            winningNumber == null -> Prize(PrizeStatus.NonWinning)
+            else -> Prize(PrizeStatus.Winning, winningNumber)
+        }
     }
 }
