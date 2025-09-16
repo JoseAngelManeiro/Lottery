@@ -28,20 +28,29 @@ internal class LotteryViewModel(
     // Trigger to force re-map (e.g., pull-to-refresh)
     private val refreshTrigger = MutableStateFlow(0)
 
+    // UI side channels
+    private val _loading = MutableStateFlow(false)
+    val loading: StateFlow<Boolean> = _loading
+
     // Final mapped list for the screen
     val numberItems: StateFlow<List<NumberItem>> =
         combine(_numbersRaw, refreshTrigger) { list, _ -> list }
             .mapLatest { list ->
-                // Run use case off the main thread
-                val result: Either<Exception, List<NumberItem>> =
-                    withContext(Dispatchers.IO) {
-                        getNumbersUseCase(list)
-                    }
+                _loading.value = true
+                try {
+                    // Run use case off the main thread
+                    val result: Either<Exception, List<NumberItem>> =
+                        withContext(Dispatchers.IO) {
+                            getNumbersUseCase(list)
+                        }
 
-                if (result.isLeft) {
-                    emptyList()
-                } else {
-                    result.rightValue
+                    if (result.isLeft) {
+                        emptyList()
+                    } else {
+                        result.rightValue
+                    }
+                } finally {
+                    _loading.value = false
                 }
             }
             .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
