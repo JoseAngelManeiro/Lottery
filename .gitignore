@@ -43,3 +43,7 @@ captures/
 freeline.py
 freeline/
 freeline_project_description.json
+
+# Google/Firebase
+app/google-services.json
+app/google-services.xml
