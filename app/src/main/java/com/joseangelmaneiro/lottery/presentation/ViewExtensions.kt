@@ -1,4 +1,4 @@
-package com.joseangelmaneiro.lottery.view
+package com.joseangelmaneiro.lottery.presentation
 
 import android.app.Activity
 import android.view.LayoutInflater
@@ -26,21 +26,6 @@ fun Activity.showAddTicketDialog(
                 val ticket = Ticket(number.padStart(5, '0'))
                 listener.invoke(ticket)
             }
-        }
-        .setCancelable(false)
-        .create()
-        .show()
-}
-
-fun Activity.showErrorDialog(
-    retry: () -> Unit
-) {
-    AlertDialog.Builder(this)
-        .setTitle("Ha ocurrido un error")
-        .setMessage("¿Qué desea hacer?")
-        .setNegativeButton("Cancelar", null)
-        .setPositiveButton("Reintentar") { _, _ ->
-            retry()
         }
         .setCancelable(false)
         .create()

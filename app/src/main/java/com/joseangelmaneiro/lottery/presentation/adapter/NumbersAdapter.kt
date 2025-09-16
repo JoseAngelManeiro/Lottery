@@ -1,4 +1,4 @@
-package com.joseangelmaneiro.lottery.view
+package com.joseangelmaneiro.lottery.presentation.adapter
 
 import android.view.View
 import android.view.ViewGroup
@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joseangelmaneiro.lottery.R
 import com.joseangelmaneiro.lottery.model.NumberItem
 import com.joseangelmaneiro.lottery.model.PrizeStatus
+import com.joseangelmaneiro.lottery.presentation.inflate
 import java.text.NumberFormat
 import java.util.Locale
 

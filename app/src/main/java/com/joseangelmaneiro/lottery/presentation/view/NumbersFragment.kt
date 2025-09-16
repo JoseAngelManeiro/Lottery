@@ -1,4 +1,4 @@
-package com.joseangelmaneiro.lottery.view
+package com.joseangelmaneiro.lottery.presentation.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,6 +15,15 @@ import com.joseangelmaneiro.lottery.LotteryType
 import com.joseangelmaneiro.lottery.R
 import com.joseangelmaneiro.lottery.model.NumberItem
 import com.joseangelmaneiro.lottery.model.Ticket
+import com.joseangelmaneiro.lottery.presentation.ActivityButtonsListener
+import com.joseangelmaneiro.lottery.presentation.LotteryViewModel
+import com.joseangelmaneiro.lottery.presentation.adapter.NumbersAdapter
+import com.joseangelmaneiro.lottery.presentation.NumbersView
+import com.joseangelmaneiro.lottery.presentation.TabsHost
+import com.joseangelmaneiro.lottery.presentation.ViewModelFactory
+import com.joseangelmaneiro.lottery.presentation.showAddTicketDialog
+import com.joseangelmaneiro.lottery.presentation.showDeleteAllTicketsDialog
+import com.joseangelmaneiro.lottery.presentation.showTicketInfoDialog
 import kotlinx.coroutines.flow.collect
 
 class NumbersFragment : Fragment(), NumbersView, ActivityButtonsListener {
@@ -88,8 +97,6 @@ class NumbersFragment : Fragment(), NumbersView, ActivityButtonsListener {
                 }
             }
         }
-
-
     }
 
     override fun onSyncButtonClick() {
@@ -97,10 +104,10 @@ class NumbersFragment : Fragment(), NumbersView, ActivityButtonsListener {
         viewModel.refreshWinnersMapping()
     }
 
-    override fun onDeleteButtonClick() { // TODO: Remove all numbers
+    override fun onDeleteButtonClick() {
         activity?.apply {
             showDeleteAllTicketsDialog(lotteryType) {
-                //deleteAllTicketsTask?.invoke(Unit)
+                viewModel.removeAllNumbers()
             }
         }
     }

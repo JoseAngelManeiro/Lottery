@@ -1,9 +1,10 @@
-package com.joseangelmaneiro.lottery.view
+package com.joseangelmaneiro.lottery.presentation.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.joseangelmaneiro.lottery.LotteryType
+import com.joseangelmaneiro.lottery.presentation.view.NumbersFragment
 
 class PageAdapter(fm:FragmentManager) : FragmentPagerAdapter(fm) {
 

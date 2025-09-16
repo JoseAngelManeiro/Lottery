@@ -85,4 +85,15 @@ object FirestoreRepo {
             }
         }.await()
     }
+
+    suspend fun removeAllNumbers(
+        lotteryType: LotteryType
+    ) {
+        val field = lotteryType.firestoreFieldKey
+        db.runTransaction { tx ->
+            val ref = docRef()
+            val newList = emptyList<String>()
+            tx.update(ref, mapOf(field to newList, "updatedAt" to FieldValue.serverTimestamp()))
+        }.await()
+    }
 }

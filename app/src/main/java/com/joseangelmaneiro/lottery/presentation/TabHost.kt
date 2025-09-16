@@ -1,4 +1,4 @@
-package com.joseangelmaneiro.lottery.view
+package com.joseangelmaneiro.lottery.presentation
 
 import com.joseangelmaneiro.lottery.LotteryType
 

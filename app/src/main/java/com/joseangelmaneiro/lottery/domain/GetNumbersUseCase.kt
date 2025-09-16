@@ -1,4 +1,4 @@
-package com.joseangelmaneiro.lottery.task
+package com.joseangelmaneiro.lottery.domain
 
 import com.joseangelmaneiro.lottery.Either
 import com.joseangelmaneiro.lottery.model.NumberItem

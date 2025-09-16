@@ -1,4 +1,4 @@
-package com.joseangelmaneiro.lottery.view
+package com.joseangelmaneiro.lottery.presentation.view
 
 import android.os.Bundle
 import android.view.Menu
@@ -10,6 +10,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.joseangelmaneiro.lottery.LotteryType
 import com.joseangelmaneiro.lottery.R
+import com.joseangelmaneiro.lottery.presentation.ActivityButtonsListener
+import com.joseangelmaneiro.lottery.presentation.adapter.PageAdapter
+import com.joseangelmaneiro.lottery.presentation.TabsHost
 
 class MainActivity : AppCompatActivity(), TabsHost {
 

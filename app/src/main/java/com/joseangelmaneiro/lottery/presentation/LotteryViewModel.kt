@@ -1,4 +1,4 @@
-package com.joseangelmaneiro.lottery.view
+package com.joseangelmaneiro.lottery.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,7 +7,7 @@ import com.joseangelmaneiro.lottery.Either
 import com.joseangelmaneiro.lottery.LotteryType
 import com.joseangelmaneiro.lottery.data.firestore.FirestoreRepo
 import com.joseangelmaneiro.lottery.model.NumberItem
-import com.joseangelmaneiro.lottery.task.GetNumbersUseCase
+import com.joseangelmaneiro.lottery.domain.GetNumbersUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -82,6 +82,12 @@ internal class LotteryViewModel(
     fun removeNumber(number: String) {
         viewModelScope.launch {
             FirestoreRepo.removeNumber(lotteryType, number)
+        }
+    }
+
+    fun removeAllNumbers() {
+        viewModelScope.launch {
+            FirestoreRepo.removeAllNumbers(lotteryType)
         }
     }
 

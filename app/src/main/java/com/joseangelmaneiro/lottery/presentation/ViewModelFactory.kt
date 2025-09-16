@@ -1,8 +1,8 @@
-package com.joseangelmaneiro.lottery.view
+package com.joseangelmaneiro.lottery.presentation
 
 import com.joseangelmaneiro.lottery.LotteryType
 import com.joseangelmaneiro.lottery.data.ApiClient
-import com.joseangelmaneiro.lottery.task.GetNumbersUseCase
+import com.joseangelmaneiro.lottery.domain.GetNumbersUseCase
 
 class ViewModelFactory(
     private val lotteryType: LotteryType
