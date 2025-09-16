@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.joseangelmaneiro.lottery.Injector
 import com.joseangelmaneiro.lottery.LotteryType
@@ -16,6 +18,7 @@ import com.joseangelmaneiro.lottery.task.DeleteAllTicketsTask
 import com.joseangelmaneiro.lottery.task.DeleteTicketTask
 import com.joseangelmaneiro.lottery.task.GetNumbersTask
 import com.joseangelmaneiro.lottery.task.SaveTicketTask
+import kotlinx.coroutines.flow.collect
 
 class NumbersFragment : Fragment(), NumbersView, ActivityButtonsListener {
 
@@ -29,14 +32,20 @@ class NumbersFragment : Fragment(), NumbersView, ActivityButtonsListener {
         }
     }
 
+    private val lotteryType: LotteryType by lazy {
+        arguments?.get(LOTTERY_TYPE) as LotteryType
+    }
+
+    private val viewModel by viewModels<LotteryViewModel> {
+        ViewModelFactory(lotteryType)
+    }
+
     private var numbersRecyclerView: RecyclerView? = null
 
     private var saveTicketTask: SaveTicketTask? = null
     private var deleteTicketTask: DeleteTicketTask? = null
     private var getNumbersTask: GetNumbersTask? = null
     private var deleteAllTicketsTask: DeleteAllTicketsTask? = null
-
-    private lateinit var lotteryType: LotteryType
 
     private var syncButtonClicked: Boolean = false
 
@@ -51,8 +60,6 @@ class NumbersFragment : Fragment(), NumbersView, ActivityButtonsListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lotteryType = arguments?.get(LOTTERY_TYPE) as LotteryType
-
         numbersRecyclerView = view.findViewById(R.id.recycler_view)
 
         activity?.applicationContext?.let { context ->
@@ -62,7 +69,12 @@ class NumbersFragment : Fragment(), NumbersView, ActivityButtonsListener {
             getNumbersTask = injector.getGetNumbersTask(this)
             deleteAllTicketsTask = injector.getDeleteAllTicketsTask(this)
 
-            loadNumbers()
+            // Collect flows safely with viewLifecycleOwner
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                viewModel.numberItems.collect { numbers ->
+                    showNumbers(numbers)
+                }
+            }
         }
     }
 
@@ -76,7 +88,10 @@ class NumbersFragment : Fragment(), NumbersView, ActivityButtonsListener {
         numbersRecyclerView?.adapter = NumbersAdapter(numbers.sortByLotteryType()) {
             activity?.apply {
                 val ticket = Ticket(it.number)
-                showTicketInfoDialog(ticket) { deleteTicketTask?.invoke(ticket) }
+                showTicketInfoDialog(ticket) {
+                    //deleteTicketTask?.invoke(ticket)
+                    viewModel.removeNumber(ticket.number)
+                }
             }
         }
 
@@ -96,17 +111,24 @@ class NumbersFragment : Fragment(), NumbersView, ActivityButtonsListener {
 
     override fun onSyncButtonClick() {
         syncButtonClicked = true
-        loadNumbers()
+        viewModel.refreshWinnersMapping()
     }
 
     override fun onDeleteButtonClick() {
         activity?.apply {
-            showDeleteAllTicketsDialog(lotteryType) { deleteAllTicketsTask?.invoke(Unit) }
+            showDeleteAllTicketsDialog(lotteryType) {
+                //deleteAllTicketsTask?.invoke(Unit)
+            }
         }
     }
 
     override fun onAddButtonClick() {
-        activity?.apply { showAddTicketDialog { saveTicketTask?.invoke(it) } }
+        activity?.apply {
+            showAddTicketDialog {
+                //saveTicketTask?.invoke(it)
+                viewModel.addNumber(it.number)
+            }
+        }
     }
 
     override fun onDestroyView() {

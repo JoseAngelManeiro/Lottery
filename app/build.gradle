@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 30
@@ -26,6 +27,26 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
+
+    // --- Firebase (old but stable for AGP 4.x) ---
+    implementation platform("com.google.firebase:firebase-bom:28.4.2")
+    implementation "com.google.firebase:firebase-firestore-ktx"
+    implementation "com.google.firebase:firebase-auth-ktx"
+
+    // --- Guava (must pin to avoid capability errors) ---
+    implementation "com.google.guava:guava:31.1-android"
+
+    // --- Kotlin coroutines ---
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.5.2"
+
+    // --- Lifecycle / ViewModel ---
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
+
+    // --- Fragment KTX for by viewModels() ---
+    implementation "androidx.fragment:fragment-ktx:1.3.6"
 
     // ConstraintLayout
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
